@@ -60,4 +60,26 @@ public class StockService {
 
         return stockMapper.toResponse(stock);
     }
+
+    /**
+     * 랜덤 비율로 주식 가격 변경
+     *
+     * @return 변경된 주식 가격
+     */
+    @Transactional
+    public int changePrice(final UUID stockId) {
+        Stock stock = findById(stockId);
+
+        int changedPrice = calculateFluctuation(stock.getPrice());
+        stock.changePrice(changedPrice);
+
+        return changedPrice;
+    }
+
+    private int calculateFluctuation(int price) {
+        // -10% ~ +10% 범위의 랜덤 비율 생성
+        double percentage = (Math.random() * 20) - 10;
+        double fluctuation = price * (percentage / 100);
+        return (int) Math.round(price + fluctuation); // 소수점 반올림 후 정수로 변환
+    }
 }

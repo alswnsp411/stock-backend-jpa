@@ -34,4 +34,15 @@ public class Stock {
 
     @OneToMany(mappedBy = "stock", cascade = CascadeType.ALL)
     private List<StockPriceHistory> priceHistories;  //주식 이력
+
+    //== 비즈니스 로직 ==//
+
+    /**
+     * 가격 변동
+     *
+     * @param price 변동된 가격
+     */
+    public void changePrice(int price) {
+        this.price = price;
+    }
 }
