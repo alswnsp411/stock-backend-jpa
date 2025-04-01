@@ -1,26 +1,26 @@
 package com.sk.skala.stockbackend.controller;
 
-import com.sk.skala.stockbackend.dto.request.BuyPlayerStockRequest;
+import com.sk.skala.stockbackend.dto.request.AddMoneyRequest;
 import com.sk.skala.stockbackend.dto.request.LoginRequest;
-import com.sk.skala.stockbackend.dto.request.SellPlayerStockRequest;
 import com.sk.skala.stockbackend.dto.request.SignUpRequest;
 import com.sk.skala.stockbackend.dto.response.PlayerResponse;
-import com.sk.skala.stockbackend.dto.response.PlayerStockListResponse;
-import com.sk.skala.stockbackend.dto.response.PlayerStockResponse;
 import com.sk.skala.stockbackend.service.PlayerService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "Player API", description = "사용자 API입니다.")
@@ -44,7 +44,7 @@ public class PlayerController {
     /**
      * 회원가입
      */
-    @Operation(summary = "회원가입", description = "새로운 회원 가입 요청을 생성합니다.")
+    @Operation(summary = "회원가입", description = "회원 가입 요청에 대해 새로운 사용자 데이터를 생성합니다.")
     @PostMapping("/sign-up")
     public ResponseEntity<PlayerResponse> signUp(@RequestBody SignUpRequest signUpRequest) {
         PlayerResponse response = playerService.signUp(signUpRequest);
@@ -52,32 +52,24 @@ public class PlayerController {
     }
 
     /**
-     * 보유 주식 목록 확인
+     * 플레이어 전체 목록 조회
      */
-    @Operation(summary = "보유 주식 목록 확인", description = "사용자의 보유 주식 목록을 조회합니다.")
-    @GetMapping("/player-stocks")
-    public ResponseEntity<List<PlayerStockListResponse>> getPlayerStockList(@RequestParam("playerId") UUID playerId) {
-        List<PlayerStockListResponse> response = playerService.getPlayerStockList(playerId);
+    @Operation(summary = "플레이어 전체 목록 조회", description = "모든 플레이어를 조회합니다.")
+    @GetMapping("")
+    public ResponseEntity<List<PlayerResponse>> getPlayerList(
+            @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable) {
+        List<PlayerResponse> response = playerService.getPlayerList(pageable);
         return ResponseEntity.ok(response);
     }
 
     /**
-     * 주식 매수
+     * 플레이어 자금 추가
      */
-    @Operation(summary = "주식 매수", description = "사용자의 주식 매수 요청을 처리합니다.")
-    @PostMapping("/player-stocks")
-    public ResponseEntity<PlayerStockResponse> addPlayerStock(@RequestBody BuyPlayerStockRequest request) {
-        PlayerStockResponse response = playerService.buyStock(request);
-        return ResponseEntity.ok(response);
-    }
-
-    /**
-     * 주식 매도
-     */
-    @Operation(summary = "주식 매도", description = "사용자의 주식 매도 요청을 처리합니다.")
-    @PutMapping("/player-stocks")
-    public ResponseEntity<PlayerStockResponse> sellPlayerStock(@RequestBody SellPlayerStockRequest request) {
-        PlayerStockResponse response = playerService.sellPlayerStock(request);
+    @Operation(summary = "플레이어 자금 추가", description = "자금 추가 요청으로부터 사용자의 자본금을 추가합니다.")
+    @PutMapping("/{playerId}/money")
+    public ResponseEntity<PlayerResponse> sellPlayerStock(@PathVariable("playerId") UUID playerId,
+                                                          @RequestBody AddMoneyRequest request) {
+        PlayerResponse response = playerService.addPlayerMoney(playerId, request);
         return ResponseEntity.ok(response);
     }
 

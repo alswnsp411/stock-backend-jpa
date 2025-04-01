@@ -1,9 +1,10 @@
 package com.sk.skala.stockbackend.repository;
 
 import com.sk.skala.stockbackend.domain.Player;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -18,6 +19,6 @@ public interface PlayerRepository extends JpaRepository<Player, UUID> {
 
     Player save(Player player);
 
-    List<Player> findAll();
+    Page<Player> findAll(Pageable pageable);
 
 }

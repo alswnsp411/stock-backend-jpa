@@ -3,6 +3,7 @@ package com.sk.skala.stockbackend.service;
 import com.sk.skala.stockbackend.domain.Player;
 import com.sk.skala.stockbackend.domain.PlayerStock;
 import com.sk.skala.stockbackend.domain.Stock;
+import com.sk.skala.stockbackend.dto.request.AddMoneyRequest;
 import com.sk.skala.stockbackend.dto.request.BuyPlayerStockRequest;
 import com.sk.skala.stockbackend.dto.request.LoginRequest;
 import com.sk.skala.stockbackend.dto.request.SellPlayerStockRequest;
@@ -18,6 +19,8 @@ import com.sk.skala.stockbackend.repository.PlayerStockRepository;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,6 +38,11 @@ public class PlayerService {
 
     private final StockService stockService;
     private final PlayerStockService playerStockService;
+
+    private Player findById(final UUID playerId) {
+        return playerRepository.findById(playerId)
+                .orElseThrow(() -> new CustomException("플레이어가 존재하지 않습니다.", HttpStatus.NOT_FOUND));
+    }
 
     private Player findByNickname(final String nickname) {
         return playerRepository.findByNickname(nickname)
@@ -164,4 +172,30 @@ public class PlayerService {
         return playerStockMapper.toResponse(player, request.getStockQuantity(), playerStock);
     }
 
+    /**
+     * 플레이어 자본금 추가
+     *
+     * @param request
+     * @return
+     */
+    @Transactional
+    public PlayerResponse addPlayerMoney(UUID playerId, AddMoneyRequest request) {
+        Player player = findById(playerId);
+        player.addMoney(request.getMoney());
+        return playerMapper.toResponse(player);
+    }
+
+    /**
+     * 플레이어 목록 확인
+     *
+     * @return
+     */
+    public List<PlayerResponse> getPlayerList(Pageable pageable) {
+        Page<Player> playerList = playerRepository.findAll(pageable);
+        if (playerList.isEmpty()) {
+            return null;
+        }
+        return playerList.getContent().stream()
+                .map(playerMapper::toResponse).toList();
+    }
 }

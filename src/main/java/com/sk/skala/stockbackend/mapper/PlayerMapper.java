@@ -23,6 +23,7 @@ public class PlayerMapper {
 
     public PlayerResponse toResponse(final Player player) {
         return new PlayerResponse(
+                player.getId(),
                 player.getNickname(),
                 player.getMoney());
     }

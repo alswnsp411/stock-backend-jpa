@@ -44,7 +44,7 @@ public class Player {
         this.money -= totalPrice;
     }
 
-    public void addMoney(int totalPrice) {
-        this.money += totalPrice;
+    public void addMoney(int money) {
+        this.money += money;
     }
 }
