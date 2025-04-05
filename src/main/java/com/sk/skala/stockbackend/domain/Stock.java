@@ -11,6 +11,7 @@ import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.BatchSize;
 
 @Entity
 @Table(name = "stocks")
@@ -33,6 +34,7 @@ public class Stock {
     private String description; // 주식 설명
 
     @OneToMany(mappedBy = "stock", cascade = CascadeType.ALL)
+    @BatchSize(size=20) //컬렉션 로딩 최적화
     private List<StockPriceHistory> priceHistories;  //주식 이력
 
     //== 비즈니스 로직 ==//

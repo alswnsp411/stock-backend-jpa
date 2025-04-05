@@ -1,13 +1,10 @@
 package com.sk.skala.stockbackend.service;
 
 import com.sk.skala.stockbackend.domain.Stock;
-import com.sk.skala.stockbackend.domain.StockPriceHistory;
 import com.sk.skala.stockbackend.dto.request.CreateStockRequest;
 import com.sk.skala.stockbackend.dto.response.StockResponse;
 import com.sk.skala.stockbackend.exception.CustomException;
 import com.sk.skala.stockbackend.mapper.StockMapper;
-import com.sk.skala.stockbackend.mapper.StockPriceHistoryMapper;
-import com.sk.skala.stockbackend.repository.StockPriceHistoryRepository;
 import com.sk.skala.stockbackend.repository.StockRepository;
 import java.util.List;
 import java.util.UUID;
@@ -25,9 +22,6 @@ public class StockService {
 
     private final StockRepository stockRepository;
     private final StockMapper stockMapper;
-
-    private final StockPriceHistoryMapper stockPriceHistoryMapper;
-    private final StockPriceHistoryRepository stockPriceHistoryRepository;
 
     public Stock findById(final UUID stockId) {
         return stockRepository.findById(stockId)
@@ -68,7 +62,7 @@ public class StockService {
     }
 
     /**
-     * 랜덤 비율로 주식 가격을 변경하고 변경 이력을 저장합니다.
+     * 랜덤 비율로 주식 가격을 변경합니다.
      *
      * @return 변경된 주식 가격
      */
@@ -76,9 +70,6 @@ public class StockService {
     public int changePrice(Stock stock) {
         int changedPrice = calculateFluctuation(stock.getPrice());
         stock.changePrice(changedPrice);
-
-        StockPriceHistory priceHistory = stockPriceHistoryMapper.toEntity(stock, changedPrice);
-        stockPriceHistoryRepository.save(priceHistory);
 
         return changedPrice;
     }
