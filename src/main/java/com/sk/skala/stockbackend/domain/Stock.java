@@ -38,11 +38,11 @@ public class Stock {
     //== 비즈니스 로직 ==//
 
     /**
-     * 가격 변동
+     * 주식 가격 업데이트
      *
-     * @param price 변동된 가격
+     * @param newPrice 변동된 가격
      */
-    public void changePrice(int price) {
-        this.price = price;
+    public void changePrice(int newPrice) {
+        this.price = newPrice;
     }
 }

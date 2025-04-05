@@ -6,18 +6,15 @@ import com.sk.skala.stockbackend.service.StockService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
-import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
-import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -58,13 +55,13 @@ public class StockController {
     /**
      * 주식 가격 변경
      */
-    @Operation(summary = "랜덤 주식 가격 변경", description = "랜덤 비율로 주식 가격을 변경합니다.")
-    @PutMapping("/{stockId}")
-    public ResponseEntity<String> addStock(@Param("stockId") UUID stockId) {
-        int changedStockPrice = stockService.changePrice(stockId);
-
-        return ResponseEntity.ok(changedStockPrice + "로 주식 가격이 변경되었습니다.");
-    }
+//    @Operation(summary = "랜덤 주식 가격 변경", description = "10% 내외 랜덤 비율로 주식 가격을 변경합니다.")
+//    @PutMapping("/{stockId}")
+//    public ResponseEntity<String> addStock(@Param("stockId") UUID stockId) {
+//        int changedStockPrice = stockService.changePrice(stockId);
+//
+//        return ResponseEntity.ok(changedStockPrice + "로 주식 가격이 변경되었습니다.");
+//    }
 
     /**
      * 주식 상장 폐지

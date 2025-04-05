@@ -1,10 +1,13 @@
 package com.sk.skala.stockbackend.service;
 
 import com.sk.skala.stockbackend.domain.Stock;
+import com.sk.skala.stockbackend.domain.StockPriceHistory;
 import com.sk.skala.stockbackend.dto.request.CreateStockRequest;
 import com.sk.skala.stockbackend.dto.response.StockResponse;
 import com.sk.skala.stockbackend.exception.CustomException;
 import com.sk.skala.stockbackend.mapper.StockMapper;
+import com.sk.skala.stockbackend.mapper.StockPriceHistoryMapper;
+import com.sk.skala.stockbackend.repository.StockPriceHistoryRepository;
 import com.sk.skala.stockbackend.repository.StockRepository;
 import java.util.List;
 import java.util.UUID;
@@ -22,6 +25,9 @@ public class StockService {
 
     private final StockRepository stockRepository;
     private final StockMapper stockMapper;
+
+    private final StockPriceHistoryMapper stockPriceHistoryMapper;
+    private final StockPriceHistoryRepository stockPriceHistoryRepository;
 
     public Stock findById(final UUID stockId) {
         return stockRepository.findById(stockId)
@@ -62,24 +68,25 @@ public class StockService {
     }
 
     /**
-     * 랜덤 비율로 주식 가격 변경
+     * 랜덤 비율로 주식 가격을 변경하고 변경 이력을 저장합니다.
      *
      * @return 변경된 주식 가격
      */
     @Transactional
-    public int changePrice(final UUID stockId) {
-        Stock stock = findById(stockId);
-
+    public int changePrice(Stock stock) {
         int changedPrice = calculateFluctuation(stock.getPrice());
         stock.changePrice(changedPrice);
+
+        StockPriceHistory priceHistory = stockPriceHistoryMapper.toEntity(stock, changedPrice);
+        stockPriceHistoryRepository.save(priceHistory);
 
         return changedPrice;
     }
 
     private int calculateFluctuation(int price) {
-        // -10% ~ +10% 범위의 랜덤 비율 생성
-        double percentage = (Math.random() * 20) - 10;
-        double fluctuation = price * (percentage / 100);
-        return (int) Math.round(price + fluctuation); // 소수점 반올림 후 정수로 변환
+        // 가격 변동률(-10% ~ +10% 범위의 랜덤 값)
+        double percentage = (Math.random() * 20 - 10) / 100.0;
+        //새 가격 계산(최소 1원으로 제한)
+        return Math.max(1, (int) (price * (1 + percentage)));
     }
 }
