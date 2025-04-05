@@ -37,6 +37,7 @@ public class PlayerController {
      */
     @Operation(summary = "로그인", description = "사용자가 로그인을 합니다.")
     @PostMapping("/login")
+    @PlayerApiDocument.LoginApiDoc
     public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest) {
         playerService.login(loginRequest);
         return ResponseEntity.ok("로그인 되었습니다.");
@@ -47,6 +48,7 @@ public class PlayerController {
      */
     @Operation(summary = "회원가입", description = "회원 가입 요청에 대해 새로운 사용자 데이터를 생성합니다.")
     @PostMapping("/sign-up")
+    @PlayerApiDocument.SignUpApiDoc
     public ResponseEntity<PlayerResponse> signUp(@RequestBody SignUpRequest signUpRequest) {
         PlayerResponse response = playerService.signUp(signUpRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
@@ -57,6 +59,7 @@ public class PlayerController {
      */
     @Operation(summary = "플레이어 전체 목록 조회", description = "모든 플레이어를 조회합니다.")
     @GetMapping("")
+    @PlayerApiDocument.GetPlayerListApiDoc
     public ResponseEntity<List<PlayerResponse>> getPlayerList(
             @RequestParam(value = "page", defaultValue = "0") int page) {
         Pageable pageable = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "id"));
@@ -69,6 +72,7 @@ public class PlayerController {
      */
     @Operation(summary = "플레이어 자금 추가", description = "자금 추가 요청으로부터 사용자의 자본금을 추가합니다.")
     @PutMapping("/{playerId}/money")
+    @PlayerApiDocument.AddPlayerApiDoc
     public ResponseEntity<PlayerResponse> sellPlayerStock(@PathVariable("playerId") UUID playerId,
                                                           @RequestBody AddMoneyRequest request) {
         PlayerResponse response = playerService.addPlayerMoney(playerId, request);
