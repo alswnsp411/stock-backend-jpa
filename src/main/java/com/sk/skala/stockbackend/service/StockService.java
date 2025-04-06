@@ -74,7 +74,7 @@ public class StockService {
         return changedPrice;
     }
 
-    private int calculateFluctuation(int price) {
+    public int calculateFluctuation(int price) {
         // 가격 변동률(-10% ~ +10% 범위의 랜덤 값)
         double percentage = (Math.random() * 20 - 10) / 100.0;
         //새 가격 계산(최소 1원으로 제한)

@@ -5,8 +5,10 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
 import java.util.List;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 
+@Primary
 @Repository
 public class StockPriceHistoryBatchRepositoryImpl implements StockPriceHistoryBatchRepository {
 
@@ -30,6 +32,7 @@ public class StockPriceHistoryBatchRepositoryImpl implements StockPriceHistoryBa
         }
     }
 
+    @Override
     // 단일 INSERT 문으로 모든 레코드 삽입
     public void saveAll(List<StockPriceHistory> histories) {
         StringBuilder sb = new StringBuilder();
