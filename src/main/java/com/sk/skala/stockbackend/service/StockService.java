@@ -2,8 +2,11 @@ package com.sk.skala.stockbackend.service;
 
 import com.sk.skala.stockbackend.domain.Stock;
 import com.sk.skala.stockbackend.dto.request.CreateStockRequest;
+import com.sk.skala.stockbackend.dto.response.StockPriceHistoryListResponse;
+import com.sk.skala.stockbackend.dto.response.StockPriceHistoryResponse;
 import com.sk.skala.stockbackend.dto.response.StockResponse;
 import com.sk.skala.stockbackend.exception.CustomException;
+import com.sk.skala.stockbackend.mapper.StockHistoryMapper;
 import com.sk.skala.stockbackend.mapper.StockMapper;
 import com.sk.skala.stockbackend.repository.StockRepository;
 import java.util.List;
@@ -22,9 +25,15 @@ public class StockService {
 
     private final StockRepository stockRepository;
     private final StockMapper stockMapper;
+    private final StockHistoryMapper stockHistoryMapper;
 
     public Stock findById(final UUID stockId) {
         return stockRepository.findById(stockId)
+                .orElseThrow(() -> new CustomException("해당 주식이 존재하지 않습니다.", HttpStatus.NOT_FOUND));
+    }
+
+    public Stock findByIdWithHistory(final UUID stockId) {
+        return stockRepository.findByIdWithHistory(stockId)
                 .orElseThrow(() -> new CustomException("해당 주식이 존재하지 않습니다.", HttpStatus.NOT_FOUND));
     }
 
@@ -79,5 +88,20 @@ public class StockService {
         double percentage = (Math.random() * 20 - 10) / 100.0;
         //새 가격 계산(최소 1원으로 제한)
         return Math.max(1, (int) (price * (1 + percentage)));
+    }
+
+    /**
+     * 변동 주식 가격을 조회합니다.
+     *
+     * @param stockId
+     * @return
+     */
+    public StockPriceHistoryListResponse getStockPriceHistories(UUID stockId) {
+        Stock stock = findByIdWithHistory(stockId);
+        List<StockPriceHistoryResponse> historyResponseList = stock.getPriceHistories().stream()
+                .map(stockHistoryMapper::toResponse).toList();
+
+        return stockMapper.toHistoryResponse(stock, historyResponseList);
+
     }
 }

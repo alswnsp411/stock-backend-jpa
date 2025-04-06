@@ -1,16 +1,19 @@
 package com.sk.skala.stockbackend.controller;
 
 import com.sk.skala.stockbackend.dto.request.CreateStockRequest;
+import com.sk.skala.stockbackend.dto.response.StockPriceHistoryListResponse;
 import com.sk.skala.stockbackend.dto.response.StockResponse;
 import com.sk.skala.stockbackend.service.StockService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -50,6 +53,17 @@ public class StockController {
         StockResponse response = stockService.createStock(request);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    /**
+     * 주식 가격 변동 이력 조회
+     */
+    @Operation(summary = "특정 주식 가격 변동 조회", description = "주식 가격 변동 이력을 조회합니다.")
+    @GetMapping("/{stockId}/stock-price-histories")
+    public ResponseEntity<StockPriceHistoryListResponse> getStockPriceHistories(@Param("stockId") UUID stockId) {
+        StockPriceHistoryListResponse response = stockService.getStockPriceHistories(stockId);
+
+        return ResponseEntity.ok().body(response);
     }
 
     /**
