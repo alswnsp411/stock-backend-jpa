@@ -9,12 +9,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class StockPriceHistoryMapper {
 
-    public StockPriceHistory toEntity(final Stock stock, final int newPrice) {
+    public StockPriceHistory toEntity(final Stock stock, final int newPrice, final LocalDateTime now) {
         return new StockPriceHistory(
                 UUID.randomUUID(),
                 stock,
                 newPrice,
-                LocalDateTime.now()
+                now
         );
     }
 }

@@ -12,12 +12,14 @@ import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.BatchSize;
 
 @Entity
 @Table(name = "stock_price_histories")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
+@BatchSize(size = 100)
 public class StockPriceHistory {
 
     @Id
